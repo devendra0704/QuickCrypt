@@ -2,13 +2,17 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import Navbar from './Navbar'
 import OrderTabs from './OrderTabs'
+import { useAuth } from '@/store/store'
 
 export default function TradeForm() {
+    const { user } = useAuth();
     const [formData, setFormData] = useState({
-        side: 'buy',
-        market: 'BTCINR',
+        side: '',
+        market: '',
         price_per_unit: '',
         total_quantity: '',
+        api_key: user.apiKey,
+        secret_key: user.secretKey
     })
     const [loading, setLoading] = useState(false)
     const [response, setResponse] = useState(null)
@@ -20,11 +24,12 @@ export default function TradeForm() {
     }
 
     const handleSubmit = async (e) => {
+        console.log(formData);
         e.preventDefault()
         setLoading(true)
         setResponse(null)
         try {
-            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/trade/buy`, formData)
+            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/trade/${formData.side}`, formData)
             setResponse(res.data)
         } catch (err) {
             setResponse(err.response?.data || { error: 'Unknown error' })
@@ -84,24 +89,24 @@ export default function TradeForm() {
     }
 
     return (
-        <div className="flex flex-col md:flex-row gap-6">
+        <div className="flex flex-row gap-26 min-h-screen">
             {/* Left side: search + market cards */}
-            <Navbar/>
-            <div className="flex-1">
+            <Navbar />
+            <div className="w-full md:w-1/2 px-4">
                 {/* Search */}
                 <div className="mb-4 mt-20">
                     <input
                         type="text"
                         placeholder="Search Markets"
-                        className="w-full p-2 rounded bg-gray-700 text-white"
+                        className="w-full p-4 rounded bg-gray-700 text-white"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
                 </div>
 
                 {/* Market Cards */}
-                <div className="grid grid-cols-1  sm:grid-cols-2 gap-4">
-                    {filterMarkets(searchQuery).slice(0, 10).map((marketData, index) => (
+                <div className="grid grid-cols-1 gap-4">
+                    {filterMarkets(searchQuery).slice(0, 20).map((marketData, index) => (
                         <div
                             key={index}
                             className="bg-gray-800 p-4 rounded-lg shadow-lg"
@@ -138,82 +143,82 @@ export default function TradeForm() {
                     ))}
                 </div>
             </div>
-            <div>
-            {/* Right side: Trade Form */}
-            <form
-                onSubmit={handleSubmit}
-                className="bg-gray-800 p-6 rounded-2xl mb-20 mt-20 shadow-lg w-full max-w-sm space-y-4 self-start"
-            >
-                <h2 className="text-2xl font-bold text-center text-white">Quickcrypt</h2>
-
-                <div>
-                    <label className="block text-sm font-medium mb-1 text-white">Side</label>
-                    <select
-                        name="side"
-                        value={formData.side}
-                        onChange={handleChange}
-                        className="w-full bg-gray-700 rounded p-2 text-white"
-                    >
-                        <option value="buy">Buy</option>
-                        <option value="sell">Sell</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium mb-1 text-white">Market</label>
-                    <input
-                        type="text"
-                        name="market"
-                        value={formData.market}
-                        onChange={handleChange}
-                        className="w-full bg-gray-700 rounded p-2 text-white"
-                    />
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium mb-1 text-white">Price per Unit</label>
-                    <input
-                        type="number"
-                        name="price_per_unit"
-                        value={formData.price_per_unit}
-                        onChange={handleChange}
-                        className="w-full bg-gray-700 rounded p-2 text-white"
-                    />
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium mb-1 text-white">Quantity</label>
-                    <input
-                        type="number"
-                        name="total_quantity"
-                        value={formData.total_quantity}
-                        onChange={handleChange}
-                        className="w-full bg-gray-700 rounded p-2 text-white"
-                    />
-                </div>
-
-                <button
-                    type="submit"
-                    className="w-full bg-blue-600 hover:bg-blue-800 p-2 rounded text-white font-semibold"
-                    disabled={loading}
+            <div className='fixed top-8 -right-12  w-1/2'>
+                {/* Right side: Trade Form */}
+                <form
+                    onSubmit={handleSubmit}
+                    className="bg-gray-800 p-6 rounded-2xl mb-20 mt-20 shadow-lg w-full max-w-sm space-y-4 self-start"
                 >
-                    {loading ? 'Placing Order...' : 'Place Order'}
-                </button>
+                    <h2 className="text-2xl font-bold text-center text-white">Quickcrypt</h2>
 
-                {response && (
-                    <div className="mt-4 text-sm">
-                        <pre className="bg-gray-700 p-3 rounded overflow-x-auto text-white">
-                            {JSON.stringify(response, null, 2)}
-                        </pre>
+                    <div>
+                        <label className="block text-sm font-medium mb-1 text-white">Side</label>
+                        <select
+                            name="side"
+                            value={formData.side}
+                            onChange={handleChange}
+                            className="w-full bg-gray-700 rounded p-2 text-white"
+                        >
+                            <option value="buy">Buy</option>
+                            <option value="sell">Sell</option>
+                        </select>
                     </div>
-                )}
-            </form>
-            <OrderTabs
-                
-                openOrders={fetchOpenOrders}
-                orderHistory={fetchOrderHistory}
-                cancelOrder={cancelOrder}
-            />
+
+                    <div>
+                        <label className="block text-sm font-medium mb-1 text-white">Market</label>
+                        <input
+                            type="text"
+                            name="market"
+                            value={formData.market}
+                            onChange={handleChange}
+                            className="w-full bg-gray-700 rounded p-2 text-white"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium mb-1 text-white">Price per Unit</label>
+                        <input
+                            type="number"
+                            name="price_per_unit"
+                            value={formData.price_per_unit}
+                            onChange={handleChange}
+                            className="w-full bg-gray-700 rounded p-2 text-white"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium mb-1 text-white">Quantity</label>
+                        <input
+                            type="number"
+                            name="total_quantity"
+                            value={formData.total_quantity}
+                            onChange={handleChange}
+                            className="w-full bg-gray-700 rounded p-2 text-white"
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        className="w-full bg-blue-600 hover:bg-blue-800 p-2 rounded text-white font-semibold"
+                        disabled={loading}
+                    >
+                        {loading ? 'Placing Order...' : 'Place Order'}
+                    </button>
+
+                    {response && (
+                        <div className="mt-4 text-sm">
+                            <pre className="bg-gray-700 p-3 rounded overflow-x-auto text-white">
+                                {JSON.stringify(response, null, 2)}
+                            </pre>
+                        </div>
+                    )}
+                </form>
+                <OrderTabs
+
+                    openOrders={fetchOpenOrders}
+                    orderHistory={fetchOrderHistory}
+                    cancelOrder={cancelOrder}
+                />
             </div>
         </div>
     )

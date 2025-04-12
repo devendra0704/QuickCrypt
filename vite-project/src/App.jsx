@@ -1,4 +1,4 @@
-import {useEffect, useState } from 'react'
+import {useEffect, useState, useTransition } from 'react'
 import './App.css'
 import TradeForms from './components/TradeForm1'
 import Login from './components/Login'
@@ -10,6 +10,7 @@ import { auth } from './utils/Firebase'
 import axios from 'axios'
 import Home from './components/Home'
 import Market from './components/Market'
+import Api from './components/Api'
 
 const AuthRoute = ({ children }) => {
   const { isLogin } = useAuth();
@@ -18,7 +19,7 @@ const AuthRoute = ({ children }) => {
 
 const LoginRoute = ({ children }) => {
   const { isLogin } = useAuth();
-  return isLogin ? <Navigate to="/home"/>: children ;
+  return isLogin ?  <Navigate to="/profile" /> : children  ;
 }
 
 function App() {
@@ -27,14 +28,15 @@ function App() {
   const [apiKey,setApiKey]=useState("");
 
 
-  useEffect(() => {
-    
+  useEffect(() => {  
     const getkeys = async () => {
       const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/get-keys/${user.uid}`);
       console.log("res", res);
 
       const data = res.data; // No need for res.json(), this is Axios
       console.log("data", data);
+
+      setApiKey(data.apiKey);
 
       setUser((prev) => ({
         ...prev,
@@ -66,8 +68,8 @@ function App() {
         });
         setLoading(false);
         // console.log("user", user);
-        console.log("user", u.displayName);
-        console.log("user", user);
+        // console.log("user", u.displayName);
+        // console.log("user", user);
       }
       else {
         setIsLogin(false);
@@ -88,11 +90,12 @@ function App() {
       ) : (
 
         <Routes>
-          <Route path="/" element={<LoginRoute> <Login /> </LoginRoute> } />
+          <Route path="/" element={ <Login/> } />
           <Route path="/trade" element={<TradeForms />} />
           <Route path="/profile" element={<AuthRoute><Profile /></AuthRoute> } />
           <Route path="/home" element={<AuthRoute> <Home/> </AuthRoute> }/>
           <Route path="/market" element={<AuthRoute> <Market/> </AuthRoute> }/>
+          <Route path="/api" element={<Api/>}/>
         </Routes>
       )}
     </>

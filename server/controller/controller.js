@@ -4,7 +4,6 @@ import getSignature from '../utils/Signature.js';
 
 dotenv.config();
 const API_URL = "https://api.coindcx.com";
-const COINDCX_API_KEY = process.env.COINDCX_API_KEY;
 
 export const userBalance = async (req, res) => {
 
@@ -68,7 +67,7 @@ export const Market_details = async (req, res) => {
 
 export const buyTrade = async (req, res) => {
     console.log("Buy trade request received:", req.body);
-    const { side, market, price_per_unit, total_quantity } = req.body;
+    const { side, market, price_per_unit, total_quantity,api_key,secret_key } = req.body;
 
     if (!side || !market || !total_quantity || !price_per_unit) {
         return res.status(400).json({ error: "Missing required trade parameters" });
@@ -86,12 +85,12 @@ export const buyTrade = async (req, res) => {
     const payload = Buffer.from(JSON.stringify(body)).toString();
 
 
-    const signature = getSignature(payload);
+    const signature = getSignature(payload,secret_key);
 
     try {
         const response = await axios.post(`${API_URL}/exchange/v1/orders/create`, body, {
             headers: {
-                'X-AUTH-APIKEY': COINDCX_API_KEY,
+                'X-AUTH-APIKEY': api_key,
                 'X-AUTH-SIGNATURE': signature,
                 'Content-Type': 'application/json',
             },
@@ -101,14 +100,18 @@ export const buyTrade = async (req, res) => {
     } catch (error) {
         res.status(error.response?.status || 500).json({
             success: false,
-            error: error.response?.data?.message || error.message,
+            message: error.response?.data?.message || error.message,
           });
     }
 }
 
 
 export const sellTrade = async (req, res) => {
-    const { originalOrder } = req.body;
+
+  console.log("selltrade", req.body);
+    const  originalOrder  = req.body;
+    const {api_key,secret_key}=req.body;
+
     const oppositeSide = originalOrder.side === 'buy' ? 'sell' : 'buy';
   
     const body = {
@@ -119,14 +122,15 @@ export const sellTrade = async (req, res) => {
       price_per_unit: originalOrder.price_per_unit,
       timestamp: Date.now(),
     };
+    console.log("body",body);
     const payload = Buffer.from(JSON.stringify(body)).toString();  
     
-    const signature = getSignature(payload);
+    const signature = getSignature(payload,secret_key);
   
     try {
       const response = await axios.post(`${API_URL}/exchange/v1/orders/create`, body, {
         headers: {
-          'X-AUTH-APIKEY': COINDCX_API_KEY,
+          'X-AUTH-APIKEY': api_key,
           'X-AUTH-SIGNATURE': signature,
           'Content-Type': 'application/json',
         },
@@ -134,6 +138,9 @@ export const sellTrade = async (req, res) => {
   
       res.json(response.data);
     } catch (error) {
-      res.status(500).json({ error: error.response?.data || error.message });
+      res.status(error.response?.status || 500).json({
+        success: false,
+        message: error.response?.data?.message || error.message,
+      });
     }
 }

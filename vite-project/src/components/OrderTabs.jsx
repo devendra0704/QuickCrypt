@@ -4,7 +4,7 @@ const OrderTabs = ({ openOrders, orderHistory, cancelOrder }) => {
     const [activeTab, setActiveTab] = useState("open");
 
     return (
-        <div className="bg-gray-800 p-4 rounded-xl shadow">
+        <div className="bg-gray-800 p-4 rounded-xl shadow w-1/2">
             <div className="flex border-b border-gray-600 mb-4">
                 <button
                     className={`px-4 py-2 text-sm font-semibold ${

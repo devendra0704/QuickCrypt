@@ -2,6 +2,7 @@
 import { db } from "../config/db.js";
 import dotenv from "dotenv";
 import crypto from "crypto";
+import { FieldValue } from "firebase-admin/firestore"; 
 
 dotenv.config();
 
@@ -80,3 +81,27 @@ export const getKeys = async (req, res) => {
     res.status(500).json({ error: "Something went wrong" });
   }
 }
+
+
+export const delete_api_key =async (req, res) => {
+
+  try {
+    const userId = req.body?.uid;
+    console.log("Deleting API key for UID:", userId);
+
+    if (!userId) {
+      return res.status(400).json({ error: "UID is required" });
+    }
+
+    const docRef = db.collection('users').doc(userId);
+    await docRef.delete();
+
+
+
+      return res.status(200).json({ message: "API key deleted" });
+  } catch (err) {
+      console.error("Failed to delete API key:", err);
+      return res.status(500).json({ error: "Failed to delete API key" });
+  }
+
+};

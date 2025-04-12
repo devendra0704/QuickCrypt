@@ -2,16 +2,22 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../store/store";
 import { signOut } from "firebase/auth";
 import { auth } from "@/utils/Firebase";
+import axios from "axios";
 
 const Navbar = () => {
-    const { user, setUser, setIsLogin } = useAuth();
+    const { user, setUser, setIsLogin,isLogin } = useAuth();
 
     const navigate = useNavigate();
     const handleLogout = async () => {
         try {
+            // await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/user/apikey`,        {
+            //     data: { uid: user.uid }
+            //   });
+
             await signOut(auth);
             setUser(null);
             setIsLogin(false);
+            console.log(isLogin);
             navigate("/");
         } catch (error) {
             console.error("Logout Error:", error.message);
