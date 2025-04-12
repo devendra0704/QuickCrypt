@@ -3,8 +3,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const BASE_URL = process.env.COINDCX_BASE_URL;
-
 const API_KEY = process.env.COINDCX_API_KEY;
 const API_SECRET = process.env.COINDCX_API_SECRET;
 

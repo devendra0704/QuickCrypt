@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import getSignature from '../utils/Signature.js';
 
 dotenv.config();
-const API_URL = process.env.COINDCX_BASE_URL;
+const API_URL = "https://api.coindcx.com";
 const COINDCX_API_KEY = process.env.COINDCX_API_KEY;
 
 export const userBalance = async (req, res) => {
