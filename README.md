@@ -57,6 +57,6 @@ Quickcrypt is a crypto trading simulator that allows users to place simulated bu
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/quickcrypt.git
+git clone https://github.com/devendra0704/QuickCrypt
 cd quickcrypt
 ```
