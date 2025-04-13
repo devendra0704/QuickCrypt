@@ -81,7 +81,7 @@ export default function TradeForm() {
 
     const cancelOrder = async (orderId) => {
         try {
-            await axios.delete(`http://localhost:5000/api/orders/cancel/${orderId}`)
+            await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/orders/cancel/${orderId}`)
             fetchOpenOrders()
         } catch (err) {
             console.error('Failed to cancel order', err)
