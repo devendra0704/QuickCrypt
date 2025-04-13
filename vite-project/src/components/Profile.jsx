@@ -3,9 +3,12 @@ import { Copy, Mail, User, KeyRound, Wallet, LogOut } from "lucide-react";
 import { useAuth } from "../store/store.jsx";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
+import axios from "axios";
+import { signOut } from "firebase/auth";
+import { auth } from "@/utils/Firebase.js";
 
 const Profile = () => {
-    const { user, setUser, setIsLogin } = useAuth();
+    const { user, setUser, setIsLogin,isLogin } = useAuth();
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState("profile");
 
@@ -14,15 +17,20 @@ const Profile = () => {
     };
 
     const handleLogout = async () => {
-        try {
-            await signOut(auth);
-            setUser(null);
-            setIsLogin(false);
-            navigate("/");
-        } catch (error) {
-            console.error("Logout Error:", error.message);
-        }
-    };
+      try {
+          await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/user/apikey`,        {
+              data: { uid: user.uid }
+            });
+
+          await signOut(auth);
+          setUser(null);
+          setIsLogin(false);
+          console.log(isLogin);
+          navigate("/");
+      } catch (error) {
+          console.error("Logout Error:", error.message);
+      }
+  };
 
 
     const renderTabContent = () => {

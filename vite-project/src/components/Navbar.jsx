@@ -10,9 +10,9 @@ const Navbar = () => {
     const navigate = useNavigate();
     const handleLogout = async () => {
         try {
-            // await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/user/apikey`,        {
-            //     data: { uid: user.uid }
-            //   });
+            await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/user/apikey`,        {
+                data: { uid: user.uid }
+              });
 
             await signOut(auth);
             setUser(null);
@@ -27,7 +27,7 @@ const Navbar = () => {
         <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white">
             <div className="max-w-full mx-auto px-25 py-3 flex items-center justify-between">
                 {/* Logo */}
-                <div className="text-3xl font-bold text-White cursor-pointer" onClick={() => navigate("/")}>
+                <div className="text-3xl font-bold text-White cursor-pointer" onClick={() => navigate("/profile")}>
                     QuickCrypt
                 </div>
                 {/* Navigation Links */}

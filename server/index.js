@@ -7,14 +7,15 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+const HOST = process.env.FRONTEND_URL
 
-// dbconnect();
 
 app.use(express.json());
 app.use(cors(
   {
-    origin: '*', // Allow requests from any origin
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow specific HTTP methods
+    origin: HOST, 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+    credentials:true
   }
 ));
 
