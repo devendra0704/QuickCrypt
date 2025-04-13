@@ -33,6 +33,9 @@ Quickcrypt is a crypto trading simulator that allows users to place simulated bu
 - **COINDCX_API_KEY** = "6e9bcb7bdd30c71d1117a0fa02b53982d4a0334efdebd416"
 - **COINDCX_API_SECRET** = "c0e1c459bc3e6d5851677acc825c604475fc008f75d7ea8dacee9f6ced1f662a"
 
+----
+
+### ⚙️ App Functionality
 - Fetches current price of BTC/USDT using the CoinDCX API
 - Users log in and provide their CoinDCX API key and secret key
 - Keys are securely stored in Firestore during the session
